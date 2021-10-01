@@ -8,5 +8,5 @@ This is a work in progress.
 To do:
 
 
-
+Handle pawns queening
 Mark end of game and display wining player
