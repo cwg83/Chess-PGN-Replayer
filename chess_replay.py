@@ -375,22 +375,30 @@ class App:
                     print(turn + " plays " + move)
                     if turn == "White":
                         rows[7][6] = wK
+                        rows[7][4] = na
                         rows[7][5] = wR
+                        rows[7][7] = na
                         current_board()
                     if turn == "Black":
                         rows[0][6] = bK
+                        rows[0][4] = na
                         rows[0][5] = bR
+                        rows[0][7] = na
                         current_board()
 
                 elif move == "O-O-O":  # Queen-side castle
                     print(turn + " plays " + move)
                     if turn == "White":
                         rows[7][2] = wK
+                        rows[7][5] = na
                         rows[7][3] = wR
+                        rows[7][0] = na
                         current_board()
                     if turn == "Black":
                         rows[0][2] = bK
+                        rows[0][4] = na
                         rows[0][3] = bR
+                        rows[0][0] = na
                         current_board()
 
                 else:  # This is a pawn move
