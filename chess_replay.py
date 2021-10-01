@@ -159,6 +159,7 @@ class App:
         moves_list = [x for x in re.split(r'(.*?\s.*?\s.*?\s)', moves_string) if x]
         moves_dict = {}
         for moves in moves_list:
+            moves = moves.replace("+", "")
             key = moves.split(". ")
             moves_dict[key[0]] = key[1].split()
 
@@ -235,7 +236,7 @@ class App:
                 rows[_rank][_file] = piece
                 rows[previous_rank][files[str(previous_file)]] = na
                 current_board()
-            # If only previous_file is passed as an argument
+            # If only previous_file or previous_rank is passed as an argument
             elif len(args) == 1:
                 current_indices = find_pieces(wR)
                 for current_index in current_indices:
@@ -357,18 +358,27 @@ class App:
 
                 elif "Q" in move:  # This is a queen move
                     print(turn + " plays " + move)
-
+                    if turn == "White":
+                        wq_indices = find_pieces(wQ)
+                        rows[rank][file] = wQ
+                        rows[wq_indices[0][0]][wq_indices[0][1]] = na
+                        current_board()
+                    if turn == "Black":
+                        bq_indices = find_pieces(bQ)
+                        rows[rank][file] = bQ
+                        rows[bq_indices[0][0]][bq_indices[0][1]] = na
+                        current_board()
                 elif "K" in move:  # This is a king move
                     print(turn + " plays " + move)
                     if turn == "White":
                         wk_indices = find_pieces(wK)
                         rows[rank][file] = wK
-                        rows[wk_indices[0][0]][wk_indices[0][0]] = na
+                        rows[wk_indices[0][0]][wk_indices[0][1]] = na
                         current_board()
                     if turn == "Black":
                         bk_indices = find_pieces(bK)
                         rows[rank][file] = bK
-                        rows[bk_indices[0][0]][bk_indices[0][0]] = na
+                        rows[bk_indices[0][0]][bk_indices[0][1]] = na
                         current_board()
 
                 elif move == "O-O":  # King-side castle
@@ -390,7 +400,7 @@ class App:
                     print(turn + " plays " + move)
                     if turn == "White":
                         rows[7][2] = wK
-                        rows[7][5] = na
+                        rows[7][4] = na
                         rows[7][3] = wR
                         rows[7][0] = na
                         current_board()
