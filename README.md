@@ -8,5 +8,6 @@ This is a work in progress.
 To do:
 
 
+Fix Rook moves
 Handle pawns queening
 Mark end of game and display wining player
