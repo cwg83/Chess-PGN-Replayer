@@ -83,8 +83,8 @@ def current_board():
     print(row1)
     print("└─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘")
 
-    sleep(3)
     screen_clear()
+    sleep(3)
 
 
 # Wait 3 seconds then clear the console
@@ -154,6 +154,20 @@ class App:
         pgn_list[1] = "1." + re.sub(' {.*?}', '', pgn_list[1])
         pgn_list[1] = pgn_list[1].replace('\n', ' ')
         data_list = list(filter(None, pgn_list[0].split('\n')))
+        result = ""
+        resignation = False
+        for data in data_list:
+            print(data)
+            if "Result" in data:
+                result = data
+            if "resignation" in data:
+                resignation = True
+        if "1-0" in result:
+            result = "White wins"
+        elif "0-1" in result:
+            result = "Black wins"
+        else:
+            result = "Draw"
         moves_string = re.sub('( 1/2|[0-1])-(1/2|[0-1])', '',
                               pgn_list[1].replace('\n', '').replace('. ', '.').replace('.', '. '))
         moves_list = [x for x in re.split(r'(.*?\s.*?\s.*?\s)', moves_string) if x]
@@ -162,6 +176,7 @@ class App:
             moves = moves.replace("+", "")
             key = moves.split(". ")
             moves_dict[key[0]] = key[1].split()
+        print(moves_dict)
 
         current_board()
 
@@ -238,32 +253,34 @@ class App:
                 current_board()
             # If only previous_file or previous_rank is passed as an argument
             elif len(args) == 1:
-                current_indices = find_pieces(wR)
+                current_indices = find_pieces(piece)
                 for current_index in current_indices:
-                    if files[str(previous_file)] == current_index[1]:
+                    if files[previous_file] == current_index[1]:
                         rows[_rank][_file] = piece
-                        rows[current_index[0]][files[str(previous_file)]] = na
+                        rows[current_index[0]][files[previous_file]] = na
+                        current_board()
+                        break
+                    else:
+                        rows[_rank][_file] = piece
+                        rows[current_index[0]][files[previous_file]] = na
                         current_board()
             # Else if neither previous_rank or previous_file are passed as arguments
             else:
-                current_indices = find_pieces(wR)
+                current_indices = find_pieces(piece)
                 for current_index in current_indices:
-                    if all(space == na for space in
-                           get_ver_or_hor_points(rows, _rank, _file, current_index[0], current_index[1])):
+                    if ((abs(current_index[0] - _rank) == 1 and current_index[1] == _file) or
+                            (abs(current_index[1] - _file == 1 and current_index[0] == _rank))):
                         rows[_rank][_file] = piece
                         rows[current_index[0]][current_index[1]] = na
                         current_board()
-                    else:
-                        current_rank_or_file = current_index[1]
-                        if all(space == na for space in
-                               get_ver_or_hor_points(rows, _rank, _file, current_index[0], current_index[1])):
-                            rows[_rank][_file] = piece
-                            rows[current_index[0]][current_index[1]] = na
-                            current_board()
-
+                        break
+                    elif all(space == na for space in
+                             get_ver_or_hor_points(rows, _rank, _file, current_index[0], current_index[1])):
+                        rows[_rank][_file] = piece
+                        rows[current_index[0]][current_index[1]] = na
+                        current_board()
         for num, moves in moves_dict.items():
             for move in moves:
-
                 if "=" in move:  # This is a pawn promotion
                     rank = 8 - int(move[1])
                     file = ord(move[0]) - 97
@@ -468,6 +485,9 @@ class App:
                     turn = "Black"
                 elif turn == "Black":
                     turn = "White"
+        if resignation:
+            result = result + " by resignation"
+        print(result)
 
 
 if __name__ == "__main__":
